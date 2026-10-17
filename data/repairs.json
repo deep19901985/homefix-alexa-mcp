@@ -1,0 +1,50 @@
+[
+  {
+    "repair_id": "HF-1042",
+    "property_id": "P-101",
+    "location": "Kitchen",
+    "issue": "Water leaking under the kitchen sink and spreading onto the floor",
+    "priority": "Urgent",
+    "status": "Open",
+    "updates": [
+      "Water is now reaching the hallway",
+      "Water is spreading further into the hallway"
+    ]
+  },
+  {
+    "repair_id": "HF-1043",
+    "property_id": "P-101",
+    "location": "Bathroom",
+    "issue": "Bathroom light not working",
+    "priority": "Medium",
+    "status": "Open",
+    "updates": []
+  },
+  {
+    "repair_id": "HF-1044",
+    "property_id": "P-101",
+    "location": "Bedroom",
+    "issue": "Radiator not heating",
+    "priority": "High",
+    "status": "Open",
+    "updates": []
+  },
+  {
+    "repair_id": "HF-1045",
+    "property_id": "P-101",
+    "location": "Living Room",
+    "issue": "Window not closing properly",
+    "priority": "Medium",
+    "status": "Open",
+    "updates": []
+  },
+  {
+    "repair_id": "HF-1046",
+    "property_id": "P-101",
+    "location": "Hallway",
+    "issue": "Ceiling light flickering",
+    "priority": "Medium",
+    "status": "Open",
+    "updates": []
+  }
+]
