@@ -3,6 +3,8 @@ from mcp.server.fastmcp import FastMCP
 # from app.database import search_repairs
 from app.database import search_repairs, get_repair_by_id, create_repair,  update_repair, generate_repair_id, update_repair_issue
 from app.models import Repair
+
+
 # Create our MCP server
 mcp = FastMCP("HomeFix")
 
@@ -22,17 +24,35 @@ def find_repairs(
 
 #  mcp tool 2 getrepair status
 
+# @mcp.tool()
+# def get_repair_status(repair_id: str) -> dict:
+#     """Retrieve the details and current status of a repair."""
+
+#     repair = get_repair_by_id(repair_id)
+
+#     if repair is None:
+#         return {"error": "Repair not found"}
+
+#     return repair.model_dump()
+
+
+
 @mcp.tool()
-def get_repair_status(repair_id: str) -> dict:
-    """Retrieve the details and current status of a repair."""
+def get_repair_status(
+    repair_id: str,
+    requester_property_id: str
+) -> dict:
+    """Retrieve a repair only when it belongs to the requesting property."""
 
     repair = get_repair_by_id(repair_id)
 
     if repair is None:
         return {"error": "Repair not found"}
 
-    return repair.model_dump()
+    if repair.property_id != requester_property_id:
+        return {"error": "Repair not found"}
 
+    return repair.model_dump()
 # tool 3  reportrepair
 @mcp.tool()
 def report_repair(
@@ -45,6 +65,10 @@ def report_repair(
 ) -> dict:
     """Create a new repair report after tenant confirmation."""
 
+
+ # Reject empty or whitespace-only descriptions
+    if not issue.strip():
+        return {"error": "Issue cannot be empty"}
     existing = search_repairs(property_id, location, issue)
 
     if existing:
@@ -60,6 +84,10 @@ def report_repair(
             "message": "Confirmation required before creating repair"
         }
     
+     # Validate priority before creating a repair
+    if priority not in ["Low", "Medium", "High", "Urgent"]:
+        return {"error": "Invalid priority"}
+
     repair_id = generate_repair_id()
 
     repair = Repair(
@@ -79,28 +107,66 @@ def report_repair(
         return {"error": str(error)}
 # tool 4 
 
+# @mcp.tool()
+# def change_repair_priority(
+#     repair_id: str,
+#     priority: str,
+#     confirmed: bool = False
+# ) -> dict:
+#     """Change repair priority only after explicit confirmation."""
+
+#     if not confirmed:
+#         return {
+#             "message": "Confirmation required before updating repair"
+#         }
+
+#     if priority not in ["Low", "Medium", "High", "Urgent"]:
+#         return {"error": "Invalid priority"}
+
+#     updated = update_repair(repair_id, priority)
+
+#     if updated is None:
+#         return {"error": "Repair not found"}
+
+#     return updated.model_dump()
+
 @mcp.tool()
 def change_repair_priority(
     repair_id: str,
     priority: str,
-    confirmed: bool = False
+    confirmed: bool = False,
+    requester_property_id: str | None = None
 ) -> dict:
-    """Change repair priority only after explicit confirmation."""
+    """Change repair priority only for the requesting property."""
 
+    # Step 1: Require confirmation
     if not confirmed:
         return {
             "message": "Confirmation required before updating repair"
         }
 
+    # Step 2: Validate priority
     if priority not in ["Low", "Medium", "High", "Urgent"]:
         return {"error": "Invalid priority"}
 
+    # Step 3: Find the existing repair
+    repair = get_repair_by_id(repair_id)
+
+    if repair is None:
+        return {"error": "Repair not found"}
+
+    # Step 4: Check property ownership
+    if repair.property_id != requester_property_id:
+        return {"error": "Repair not found"}
+
+    # Step 5: Update only after all checks pass
     updated = update_repair(repair_id, priority)
 
     if updated is None:
         return {"error": "Repair not found"}
 
     return updated.model_dump()
+
 
 # ---tool 5
 
@@ -109,7 +175,8 @@ def change_repair_priority(
 def add_repair_update(
     repair_id: str,
     update_text: str,
-    confirmed: bool = False
+    confirmed: bool = False,
+     requester_property_id: str | None = None
 ) -> dict:
     """Add a tenant update to an existing repair after confirmation."""
 
@@ -118,9 +185,25 @@ def add_repair_update(
             "message": "Confirmation required before adding update"
         }
 
+    # if not update_text.strip():
+    #     return {"error": "Update cannot be empty"}
+
+    # updated = update_repair_issue(repair_id, update_text)
+
     if not update_text.strip():
         return {"error": "Update cannot be empty"}
 
+    # Find the repair
+    repair = get_repair_by_id(repair_id)
+
+    if repair is None:
+        return {"error": "Repair not found"}
+
+    # Check property ownership
+    if repair.property_id != requester_property_id:
+        return {"error": "Repair not found"}
+
+    # Update only after all checks pass
     updated = update_repair_issue(repair_id, update_text)
 
     if updated is None:
