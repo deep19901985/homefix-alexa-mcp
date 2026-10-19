@@ -1,4 +1,4 @@
-
+import os
 from mcp.server.fastmcp import FastMCP
 # from app.database import search_repairs
 from app.database import search_repairs, get_repair_by_id, create_repair,  update_repair, generate_repair_id, update_repair_issue
@@ -6,7 +6,13 @@ from app.models import Repair
 
 
 # Create our MCP server
-mcp = FastMCP("HomeFix")
+# mcp = FastMCP("HomeFix")
+mcp = FastMCP(
+    "HomeFix",
+    host=os.getenv("MCP_HOST", "127.0.0.1"),
+    port=int(os.getenv("MCP_PORT", "8000"))
+)
+
 
 
 @mcp.tool()
