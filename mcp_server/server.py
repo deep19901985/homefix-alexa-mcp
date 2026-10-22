@@ -1,18 +1,31 @@
 import os
 from mcp.server.fastmcp import FastMCP
 # from app.database import search_repairs
-from app.database import search_repairs, get_repair_by_id, create_repair,  update_repair, generate_repair_id, update_repair_issue
+# from app.database import search_repairs, get_repair_by_id, create_repair,  update_repair, generate_repair_id, update_repair_issue
+from app.storage import (
+    search_repairs,
+    get_repair_by_id,
+    create_repair,
+    update_repair,
+    generate_repair_id,
+    update_repair_issue,
+)
 from app.models import Repair
 
 
 # Create our MCP server
 # mcp = FastMCP("HomeFix")
+# mcp = FastMCP(
+#     "HomeFix",
+#     host=os.getenv("MCP_HOST", "127.0.0.1"),
+#     port=int(os.getenv("MCP_PORT", "8000"))
+# )
 mcp = FastMCP(
     "HomeFix",
     host=os.getenv("MCP_HOST", "127.0.0.1"),
-    port=int(os.getenv("MCP_PORT", "8000"))
+    port=int(os.getenv("MCP_PORT", "8000")),
+    stateless_http=True
 )
-
 
 
 @mcp.tool()
@@ -166,7 +179,12 @@ def change_repair_priority(
         return {"error": "Repair not found"}
 
     # Step 5: Update only after all checks pass
-    updated = update_repair(repair_id, priority)
+    # updated = update_repair(repair_id, priority)
+    updated = update_repair(
+        repair_id,
+        requester_property_id,
+        priority
+        )
 
     if updated is None:
         return {"error": "Repair not found"}
@@ -210,8 +228,12 @@ def add_repair_update(
         return {"error": "Repair not found"}
 
     # Update only after all checks pass
-    updated = update_repair_issue(repair_id, update_text)
-
+    # updated = update_repair_issue(repair_id, update_text)
+    updated = update_repair_issue(
+         repair_id,
+         requester_property_id,
+         update_text
+    )
     if updated is None:
         return {"error": "Repair not found"}
 

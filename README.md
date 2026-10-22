@@ -97,8 +97,46 @@ python check_mcp_connection.py
 
 The connectivity check discovers all five HomeFix MCP tools.
 
+
+## Storage Backends
+
+HomeFix supports two storage backends:
+
+- **JSON:** Default for local development and testing.
+- **Amazon DynamoDB:** Persistent cloud storage for repair records.
+
+To use DynamoDB, create a table named `HomeFixRepairs` with `repair_id` as its String partition key.
+
+Configure the environment:
+
+```powershell
+$env:HOMEFIX_STORAGE_BACKEND = "dynamodb"
+$env:HOMEFIX_DYNAMODB_TABLE = "HomeFixRepairs"
+$env:AWS_REGION = "eu-west-2"
+```
+
+AWS credentials and DynamoDB permissions must be configured separately. Never commit AWS credentials.
+
+## Verification
+
+Run the full automated test suite:
+
+```bash
+python -m pytest -q
+```
+
+Latest verified result: 26 tests passing.
+
+The MCP server has been tested locally using Streamable HTTP, with all five tools successfully discovered.
+
+Live DynamoDB integration has also been verified using synthetic repair records, including creation, retrieval, search, priority changes and repair updates.
+
+
+
 ## Current Limitations
 
-HomeFix currently runs as a local prototype with JSON storage and synthetic repair data.
+HomeFix is a working MCP prototype with local JSON storage and tested AWS DynamoDB integration.
 
-Alexa+ integration, publicly accessible HTTPS hosting, and trusted tenant authentication remain future development tasks.
+AWS AgentCore hosting and direct Alexa+ integration are not yet complete.
+
+Property-level checks and confirmation safeguards are implemented, but tenant identity is not independently authenticated. The prototype must use synthetic demonstration data only and should not be exposed to real tenants until authentication and authorisation are completed.
