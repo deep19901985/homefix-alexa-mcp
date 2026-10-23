@@ -1,13 +1,5 @@
 
-# import json
-# from pathlib import Path
 
-# DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "repairs.json"
-
-# def get_repairs():
-#     with open(DATA_FILE, "r", encoding="utf-8") as file:
-#         repairs = json.load(file)
-#     return repairs
 
 import json
 from pathlib import Path
@@ -33,34 +25,6 @@ def get_repair_by_id(repair_id: str):
     return None
 
 
-# def search_repairs(property_id: str, location: str):
-#     repairs = get_repairs()
-#     results = []
-
-#     for repair in repairs:
-#         if (
-#             repair.property_id == property_id
-#             and repair.location.lower() == location.lower()
-#             and repair.status.lower() == "open"
-#         ):
-#             results.append(repair)
-
-#     return results
-# def search_repairs(property_id: str, location: str, issue: str = ""):
-#     repairs = get_repairs()
-#     results = []
-
-#     for repair in repairs:
-#         if (
-#             repair.property_id == property_id
-#             and repair.location.lower() == location.lower()
-#             and repair.status.lower() == "open"
-#             and issue.lower() in repair.issue.lower()
-#         ):
-#             results.append(repair)
-
-#     return results
-# Normalize issue descriptions
 def normalize_issue(text: str):
     text = text.lower()
 
@@ -106,20 +70,7 @@ def search_repairs(property_id: str, location: str, issue: str = ""):
 
     return results
 
-# def search_repairs(property_id: str, location: str, issue: str = ""):
-#     repairs = get_repairs()
-#     results = []
 
-#     for repair in repairs:
-#         if (
-#             repair.property_id == property_id
-#             and repair.location.lower() == location.lower()
-#             and repair.status.lower() == "open"
-#             and issue.lower() in repair.issue.lower()
-#         ):
-#             results.append(repair)
-
-#     return results
 
 # save the records
 
@@ -159,18 +110,7 @@ def update_repair(repair_id: str, priority: str):
     return None
 
 
-#  update repair issues description
 
-# def update_repair_issue(repair_id: str, new_issue: str):
-#     repairs = get_repairs()
-
-#     for repair in repairs:
-#         if repair.repair_id == repair_id:
-#             repair.issue = new_issue
-#             save_repairs(repairs)
-#             return repair
-
-#     return None
 
 def update_repair_issue(repair_id: str, new_issue: str):
     repairs = get_repairs()

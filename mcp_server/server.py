@@ -1,7 +1,5 @@
 import os
 from mcp.server.fastmcp import FastMCP
-# from app.database import search_repairs
-# from app.database import search_repairs, get_repair_by_id, create_repair,  update_repair, generate_repair_id, update_repair_issue
 from app.storage import (
     search_repairs,
     get_repair_by_id,
@@ -13,13 +11,7 @@ from app.storage import (
 from app.models import Repair
 
 
-# Create our MCP server
-# mcp = FastMCP("HomeFix")
-# mcp = FastMCP(
-#     "HomeFix",
-#     host=os.getenv("MCP_HOST", "127.0.0.1"),
-#     port=int(os.getenv("MCP_PORT", "8000"))
-# )
+
 mcp = FastMCP(
     "HomeFix",
     host=os.getenv("MCP_HOST", "127.0.0.1"),
@@ -39,20 +31,6 @@ def find_repairs(
     repairs = search_repairs(property_id, location, issue)
 
     return [repair.model_dump() for repair in repairs]
-
-
-#  mcp tool 2 getrepair status
-
-# @mcp.tool()
-# def get_repair_status(repair_id: str) -> dict:
-#     """Retrieve the details and current status of a repair."""
-
-#     repair = get_repair_by_id(repair_id)
-
-#     if repair is None:
-#         return {"error": "Repair not found"}
-
-#     return repair.model_dump()
 
 
 
@@ -126,28 +104,6 @@ def report_repair(
         return {"error": str(error)}
 # tool 4 
 
-# @mcp.tool()
-# def change_repair_priority(
-#     repair_id: str,
-#     priority: str,
-#     confirmed: bool = False
-# ) -> dict:
-#     """Change repair priority only after explicit confirmation."""
-
-#     if not confirmed:
-#         return {
-#             "message": "Confirmation required before updating repair"
-#         }
-
-#     if priority not in ["Low", "Medium", "High", "Urgent"]:
-#         return {"error": "Invalid priority"}
-
-#     updated = update_repair(repair_id, priority)
-
-#     if updated is None:
-#         return {"error": "Repair not found"}
-
-#     return updated.model_dump()
 
 @mcp.tool()
 def change_repair_priority(
@@ -179,7 +135,7 @@ def change_repair_priority(
         return {"error": "Repair not found"}
 
     # Step 5: Update only after all checks pass
-    # updated = update_repair(repair_id, priority)
+    
     updated = update_repair(
         repair_id,
         requester_property_id,
@@ -209,10 +165,7 @@ def add_repair_update(
             "message": "Confirmation required before adding update"
         }
 
-    # if not update_text.strip():
-    #     return {"error": "Update cannot be empty"}
 
-    # updated = update_repair_issue(repair_id, update_text)
 
     if not update_text.strip():
         return {"error": "Update cannot be empty"}
@@ -240,8 +193,7 @@ def add_repair_update(
     return updated.model_dump()
 
 
-# if __name__ == "__main__":
-#     mcp.run()
+
 
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")

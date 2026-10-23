@@ -1,17 +1,4 @@
-# from mcp_server.server import change_repair_priority
 
-
-# def test_priority_change_requires_confirmation():
-#     result = change_repair_priority(
-#         repair_id="HF-1001",
-#         priority="Urgent",
-#         confirmed=False
-#     )
-
-#     assert result == {
-#         "message": "Confirmation required before updating repair"
-#     }
-# ---
 from mcp_server.server import change_repair_priority
 
 from mcp_server.server import add_repair_update
